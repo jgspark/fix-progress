@@ -8,6 +8,7 @@ import * as moment from 'moment';
 require('moment-duration-format')
 import * as Progress from 'react-native-progress';
 import timer from 'react-native-timer';
+import {re} from "@babel/core/lib/vendor/import-meta-resolve";
 
 class Timer extends Component {
 
@@ -58,7 +59,9 @@ class Timer extends Component {
         this.tick = this.tick.bind(this);
     }
 
-   componentDidMount() {
+    componentDidMount() {
+
+        console.debug("componentDidMount : ", JSON.stringify(this.props))
 
         const remainingTime = this.props.remainingTime;
 
@@ -66,7 +69,8 @@ class Timer extends Component {
             throw Error("setting the remainingTime value is required");
         }
 
-        this.setState({
+
+        const state = {
             counter: remainingTime,
             originalCounter: remainingTime,
             initialState: true,
@@ -76,10 +80,30 @@ class Timer extends Component {
             stop: true,
             resume: false,
             interval: remainingTime,
-        })
+        }
+
+        this.setState(state)
+        return
+
+        if (this.props.state) {
+
+            this.setState({...state, ...this.props.state})
+            // auto start
+            this._play()
+            return;
+        }
+
     }
 
+    // clean up
+    componentWillUnmount() {
+        console.log("componentWillUnmount : ", JSON.stringify(this.props))
+    }
+
+    // updated
     componentDidUpdate() {
+
+        console.log("componentDidUpdate : ", JSON.stringify(this.props))
 
         const remainingTime = this.props.remainingTime
 
@@ -147,6 +171,12 @@ class Timer extends Component {
     }
 
     _play() {
+
+        console.log("play", this.state.play)
+        console.log("stop", this.state.stop)
+        console.log("resume", this.state.resume)
+        console.log("pause", this.state.pause)
+
         if (this.state.play) {
             //this._stop();
             this.setState({
