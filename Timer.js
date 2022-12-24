@@ -58,7 +58,7 @@ class Timer extends Component {
         this.tick = this.tick.bind(this);
     }
 
-   componentDidMount() {
+    componentDidMount() {
 
         const remainingTime = this.props.remainingTime;
 
@@ -83,7 +83,7 @@ class Timer extends Component {
 
         const remainingTime = this.props.remainingTime
 
-        if (this.state.originalCounter != remainingTime) {
+        if (this.state.originalCounter !== remainingTime) {
             this.setState({
                 counter: remainingTime,
                 originalCounter: remainingTime,
@@ -106,7 +106,7 @@ class Timer extends Component {
 
             const initCounter = originalCounter - 1;
 
-            const initProgress = 1 - (initCounter / originalCounter);
+            const _progress = getProgress(initCounter, originalCounter)
 
             this.setState({
                 initialState: false,
@@ -116,7 +116,7 @@ class Timer extends Component {
                 stop: !this.state.stop,
                 pause: true,
                 resume: false,
-                progress: initProgress,
+                progress: _progress,
             });
 
             return;
@@ -132,11 +132,11 @@ class Timer extends Component {
 
             const counter = this.state.counter - 1;
 
-            const progress = 1 - (counter / this.state.originalCounter);
+            const _progress = getProgress(counter, this.state.originalCounter)
 
             this.setState({
                 counter: counter,
-                progress: progress,
+                progress: _progress,
             });
 
         }
