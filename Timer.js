@@ -61,14 +61,13 @@ class Timer extends Component {
 
     componentDidMount() {
 
-        console.debug("componentDidMount : ", JSON.stringify(this.props))
+        // console.debug("componentDidMount : ", JSON.stringify(this.props))
 
         const remainingTime = this.props.remainingTime;
 
         if (remainingTime == null || typeof remainingTime == "undefined") {
             throw Error("setting the remainingTime value is required");
         }
-
 
         const state = {
             counter: remainingTime,
@@ -82,22 +81,24 @@ class Timer extends Component {
             interval: remainingTime,
         }
 
-        this.setState(state)
-        return
+        if (
+            !(this.props.state == null || this.props.state == 'undefined') &&
+            this.props.state.name !== 'DEFAULT'
+        ) {
 
-        if (this.props.state) {
+            console.debug("this working to timer ....")
 
             this.setState({...state, ...this.props.state})
-            // auto start
-            this._play()
-            return;
-        }
 
+            this._play()
+        } else {
+            this.setState(state)
+        }
     }
 
     // clean up
     componentWillUnmount() {
-        console.log("componentWillUnmount : ", JSON.stringify(this.props))
+        // console.log("componentWillUnmount : ", JSON.stringify(this.props))
     }
 
     // updated
@@ -108,7 +109,8 @@ class Timer extends Component {
         const remainingTime = this.props.remainingTime
 
         if (this.state.originalCounter != remainingTime) {
-            this.setState({
+
+            const state = {
                 counter: remainingTime,
                 originalCounter: remainingTime,
                 initialState: true,
@@ -118,7 +120,9 @@ class Timer extends Component {
                 stop: true,
                 resume: false,
                 interval: remainingTime,
-            })
+            }
+
+            this.setState(state)
         }
     }
 
@@ -151,6 +155,7 @@ class Timer extends Component {
             this.setState({
                 counter: 0, progress: 0, play: true, pause: false, resume: false,
             });
+
             this.releaseResources();
         } else {
 
@@ -163,6 +168,7 @@ class Timer extends Component {
                 progress: progress,
             });
 
+            this.props.getTimerState(this.state)
         }
     }
 
@@ -171,11 +177,6 @@ class Timer extends Component {
     }
 
     _play() {
-
-        console.log("play", this.state.play)
-        console.log("stop", this.state.stop)
-        console.log("resume", this.state.resume)
-        console.log("pause", this.state.pause)
 
         if (this.state.play) {
             //this._stop();
